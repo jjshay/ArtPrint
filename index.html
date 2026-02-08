@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Print - Epson P9750</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px;
+        }
+        h1 { font-size: 24px; font-weight: 300; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0;
+        }
+        .tab {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: #999; }
+        .tab.active { color: #fff; border-bottom-color: #fff; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* PRINT TAB */
+        .drop-zone {
+            border: 2px dashed #444;
+            border-radius: 12px;
+            padding: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 30px;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #fff;
+            background: #222;
+        }
+        .drop-zone p { color: #888; font-size: 18px; }
+
+        .preview-container { display: none; gap: 40px; }
+        .preview-container.active { display: grid; grid-template-columns: 1fr 360px; }
+
+        .preview {
+            background: #222;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .preview img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+        }
+        .filename {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .controls { background: #222; border-radius: 12px; padding: 24px; }
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        .stat { margin-bottom: 16px; }
+        .stat-label { font-size: 12px; color: #666; }
+        .stat-value { font-size: 20px; font-weight: 300; margin-top: 2px; }
+        .stat-value.warning { color: #f5a623; }
+        .stat-value.good { color: #7ed321; }
+        .stat-value.bad { color: #d0021b; }
+
+        .stat-row { display: flex; gap: 20px; }
+        .stat-row .stat { flex: 1; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        .size-presets { margin-bottom: 16px; }
+        .preset-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+        .preset-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover { background: #444; }
+        .preset-btn.active { background: #fff; color: #000; border-color: #fff; }
+
+        .size-inputs { display: flex; gap: 8px; align-items: center; }
+        .size-inputs input { width: 70px; text-align: center; }
+        .size-inputs span { color: #666; font-size: 14px; }
+
+        .print-btn {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+        }
+        .print-btn:hover { background: #eee; }
+        .print-btn:disabled { background: #444; color: #666; cursor: not-allowed; }
+
+        .ink-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .ink-matte { background: #4a4a4a; color: #fff; }
+        .ink-photo { background: #1a1a3a; color: #8af; }
+
+        /* SETTINGS TAB */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .settings-section {
+            background: #222;
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .settings-section h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .paper-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .paper-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .paper-item:hover { background: #333; }
+        .paper-item.selected { background: #333; border: 1px solid #555; }
+        .paper-item-name { font-size: 14px; }
+        .paper-item-type { font-size: 12px; color: #666; }
+        .paper-item-delete {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 16px;
+        }
+        .paper-item-delete:hover { color: #f55; }
+
+        .add-paper-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; }
+        .add-paper-form h4 { font-size: 14px; margin-bottom: 16px; color: #888; }
+
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        .add-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        .add-btn:hover { background: #444; }
+
+        .color-profile-info {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .color-profile-info p {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .color-profile-info p:last-child { margin-bottom: 0; }
+        .color-profile-info strong { color: #fff; }
+
+        /* SOURCES TAB */
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .source-card {
+            background: #222;
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s;
+        }
+        .source-card:hover { transform: translateY(-2px); }
+        .source-card h3 { font-size: 18px; margin-bottom: 8px; }
+        .source-card .artist { color: #888; font-size: 14px; margin-bottom: 16px; }
+        .source-card .links a {
+            display: inline-block;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+        .source-card .links a:hover { background: #444; }
+        .source-card .size { font-size: 12px; color: #666; margin-top: 12px; }
+        .source-card .size-badge {
+            display: inline-block;
+            background: #3a3a5a;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }
+        .source-card .size-badge::before {
+            content: "📐 ";
+        }
+        .source-card .size-badge.large { background: #4a3a5a; }
+        .source-card .size-badge.xlarge { background: #5a3a4a; }
+
+        .workflow-section {
+            background: #222;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+        .workflow-section h3 { font-size: 18px; margin-bottom: 20px; }
+        .workflow-steps {
+            display: flex;
+            gap: 20px;
+        }
+        .workflow-step {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        .workflow-step .number {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            color: #000;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .workflow-step h4 { font-size: 14px; margin-bottom: 8px; }
+        .workflow-step p { font-size: 13px; color: #888; }
+
+        /* COLLECTION TAB */
+        .collection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .collection-header h2 {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .collection-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .collection-controls select {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .collection-item {
+            background: #222;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .collection-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .collection-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
+        .collection-item-info {
+            padding: 16px;
+        }
+        .collection-item-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .collection-item-artist {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .collection-item-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .collection-item-meta span {
+            font-size: 12px;
+            color: #666;
+            background: #2a2a2a;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .collection-item-meta .size-tag {
+            background: #3a3a5a;
+            color: #fff;
+        }
+        .collection-item-meta .quality-good { background: #2a4a2a; color: #7ed321; }
+        .collection-item-meta .quality-ok { background: #4a4a2a; color: #f5a623; }
+        .collection-item-meta .quality-low { background: #4a2a2a; color: #d0021b; }
+        .collection-empty {
+            text-align: center;
+            padding: 80px 40px;
+            color: #666;
+        }
+        .collection-empty h3 {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .collection-empty p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .add-images-btn {
+            background: #333;
+            border: 2px dashed #555;
+            color: #888;
+            padding: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .add-images-btn:hover {
+            border-color: #888;
+            color: #fff;
+        }
+        .folder-path {
+            background: #2a2a2a;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        .folder-path strong { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Art Print</h1>
+        <p class="subtitle">Epson SureColor P9750 · 44" · UltraChrome PRO</p>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="print">Print</button>
+            <button class="tab" data-tab="collection">My Collection</button>
+            <button class="tab" data-tab="settings">Printer Settings</button>
+            <button class="tab" data-tab="sources">Warhol Sources</button>
+        </div>
+
+        <!-- PRINT TAB -->
+        <div class="tab-content active" id="print">
+            <div class="drop-zone" id="dropZone">
+                <p>Drop image here or click to select</p>
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <div class="preview">
+                    <img id="previewImg" src="" alt="Preview">
+                    <p class="filename" id="filename"></p>
+                </div>
+
+                <div class="controls">
+                    <div class="section-title">Image Analysis</div>
+
+                    <div class="stat-row">
+                        <div class="stat">
+                            <div class="stat-label">Dimensions</div>
+                            <div class="stat-value" id="dimensions">-</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Print DPI</div>
+                            <div class="stat-value" id="dpi">-</div>
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Quality Assessment</div>
+                        <div class="stat-value" id="quality">-</div>
+                    </div>
+
+                    <div class="section-title">Print Size</div>
+
+                    <div class="form-group">
+                        <label>Media Type</label>
+                        <select id="mediaType">
+                            <option value="roll">Roll (44" wide)</option>
+                            <option value="sheet">Cut Sheets</option>
+                        </select>
+                    </div>
+
+                    <div class="size-presets">
+                        <label style="font-size: 12px; color: #888; margin-bottom: 8px; display: block;">Warhol Original Sizes</label>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-w="36" data-h="36">36×36 (Marilyn)</button>
+                            <button class="preset-btn" data-w="38" data-h="38">38×38 (Moonwalk)</button>
+                            <button class="preset-btn active" data-w="40" data-h="40">40×40 (Lennon)</button>
+                        </div>
+                    </div>
+
+                    <div class="size-presets" style="margin-top: 12px;">
+                        <label style="font-size: 12px; color: #888; margin-bottom: 8px; display: block;">Arches Sheet Sizes (with 1" margin)</label>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-w="20" data-h="28">20×28 (22×30 sheet)</button>
+                            <button class="preset-btn" data-w="27" data-h="39">27×39 (29×41 sheet)</button>
+                        </div>
+                    </div>
+
+                    <div class="size-presets" style="margin-top: 12px;">
+                        <label style="font-size: 12px; color: #888; margin-bottom: 8px; display: block;">Standard Sizes</label>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-w="24" data-h="24">24×24</button>
+                            <button class="preset-btn" data-w="30" data-h="30">30×30</button>
+                            <button class="preset-btn" data-w="24" data-h="36">24×36</button>
+                            <button class="preset-btn" data-w="30" data-h="40">30×40</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Custom Size (inches)</label>
+                        <div class="size-inputs">
+                            <input type="number" id="customW" value="40" min="1" max="44">
+                            <span>×</span>
+                            <input type="number" id="customH" value="40" min="1">
+                            <span>inches</span>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Paper & Output</div>
+
+                    <div class="form-group">
+                        <label>Paper Profile</label>
+                        <select id="paperSelect"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Black Ink Mode
+                            <span class="ink-indicator" id="inkIndicator">Auto</span>
+                        </label>
+                        <select id="blackInk">
+                            <option value="auto">Auto (based on paper)</option>
+                            <option value="matte">Matte Black</option>
+                            <option value="photo">Photo Black</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Print Quality</label>
+                        <select id="printQuality">
+                            <option value="best">Best Photo (2880×1440 dpi)</option>
+                            <option value="high">High (1440×1440 dpi)</option>
+                            <option value="standard">Standard (720×720 dpi)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Color Management</label>
+                        <select id="colorMode">
+                            <option value="adobergb">Adobe RGB</option>
+                            <option value="srgb">sRGB</option>
+                            <option value="printer">Printer Manages Colors</option>
+                        </select>
+                    </div>
+
+                    <div class="section-title">Thick Paper Settings</div>
+
+                    <div class="form-group">
+                        <label>Platen Gap</label>
+                        <select id="platenGap">
+                            <option value="auto">Auto (thin papers)</option>
+                            <option value="wide">Wide (medium papers)</option>
+                            <option value="wider">Wider (thick 300+ gsm)</option>
+                            <option value="widest">Widest (canvas/board)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Suction</label>
+                        <select id="suction">
+                            <option value="standard">Standard</option>
+                            <option value="low">Low (thick/stiff paper)</option>
+                            <option value="lowest">Lowest (very thick)</option>
+                            <option value="off">Off (curled paper)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Drying Time</label>
+                        <select id="dryingTime">
+                            <option value="standard">Standard</option>
+                            <option value="longer">Longer (+30%)</option>
+                            <option value="longest">Longest (+60%)</option>
+                        </select>
+                    </div>
+
+                    <button class="print-btn" id="printBtn" disabled>Print</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLLECTION TAB -->
+        <div class="tab-content" id="collection">
+            <div class="folder-path">
+                <strong>Image Folder:</strong> /Users/johnshay/ArtPrint/Images/
+            </div>
+
+            <div class="collection-header">
+                <h2>Downloaded Art Prints <span id="collectionCount" style="color:#888;font-weight:400;">161 images</span></h2>
+                <div class="collection-controls">
+                    <select id="sortBy">
+                        <option value="name">Sort by Title</option>
+                        <option value="artist">Sort by Artist</option>
+                        <option value="resolution">Sort by Resolution (Largest)</option>
+                        <option value="quality">Sort by DPI Quality</option>
+                    </select>
+                    <select id="filterArtist">
+                        <option value="all">All Artists</option>
+                        <option value="warhol">Andy Warhol (60)</option>
+                        <option value="haring">Keith Haring (6)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="collection-grid" id="collectionGrid">
+                <!-- Images will be populated here -->
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div class="add-images-btn" id="addImagesBtn">
+                    <p style="font-size: 24px; margin-bottom: 8px;">+</p>
+                    <p>Drop images here or click to add to collection</p>
+                </div>
+            </div>
+
+            <div class="workflow-section" style="margin-top: 30px;">
+                <h3>Naming Convention</h3>
+                <p style="color: #888; font-size: 14px; margin-bottom: 16px;">
+                    For best organization, name your files like: <code style="background: #333; padding: 4px 8px; border-radius: 4px;">Artist_Title_Year.jpg</code>
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                    <div style="background: #2a2a2a; padding: 16px; border-radius: 8px;">
+                        <code style="color: #7ed321;">Warhol_Marilyn_1967.jpg</code>
+                    </div>
+                    <div style="background: #2a2a2a; padding: 16px; border-radius: 8px;">
+                        <code style="color: #7ed321;">Warhol_Moonwalk_1987.tiff</code>
+                    </div>
+                    <div style="background: #2a2a2a; padding: 16px; border-radius: 8px;">
+                        <code style="color: #7ed321;">Haring_RadiantBaby_1982.png</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div class="tab-content" id="settings">
+            <div class="settings-grid">
+                <div class="settings-section">
+                    <h3>Paper Profiles</h3>
+                    <div class="paper-list" id="paperList"></div>
+
+                    <div class="add-paper-form">
+                        <h4>Add Custom Paper</h4>
+                        <div class="form-group">
+                            <label>Paper Name</label>
+                            <input type="text" id="newPaperName" placeholder="e.g., Hahnemühle Photo Rag 308">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Surface Type</label>
+                                <select id="newPaperSurface">
+                                    <option value="matte">Matte</option>
+                                    <option value="luster">Luster/Satin</option>
+                                    <option value="glossy">Glossy</option>
+                                    <option value="canvas">Canvas</option>
+                                    <option value="fineart">Fine Art</option>
+                                    <option value="watercolor">Watercolor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Weight (gsm)</label>
+                                <input type="number" id="newPaperWeight" placeholder="308">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Black Ink</label>
+                                <select id="newPaperInk">
+                                    <option value="matte">Matte Black</option>
+                                    <option value="photo">Photo Black</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Roll Width (inches)</label>
+                                <input type="number" id="newPaperWidth" placeholder="44">
+                            </div>
+                        </div>
+                        <button class="add-btn" id="addPaperBtn">Add Paper Profile</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>P9750 Color Settings</h3>
+
+                    <div class="form-group">
+                        <label>Default Color Profile</label>
+                        <select id="defaultColorProfile">
+                            <option value="adobergb">Adobe RGB (1998)</option>
+                            <option value="srgb">sRGB IEC61966-2.1</option>
+                            <option value="prophotorgb">ProPhoto RGB</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rendering Intent</label>
+                        <select id="renderingIntent">
+                            <option value="perceptual">Perceptual (photos)</option>
+                            <option value="relative">Relative Colorimetric (art)</option>
+                            <option value="saturation">Saturation (graphics)</option>
+                            <option value="absolute">Absolute Colorimetric (proofing)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Black Point Compensation</label>
+                        <select id="blackPoint">
+                            <option value="on">On (recommended)</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="color-profile-info">
+                        <p><strong>For Warhol prints:</strong></p>
+                        <p>Use <strong>Relative Colorimetric</strong> with Black Point Compensation ON. This preserves the flat, saturated colors of screen prints.</p>
+                        <p>If using Topaz upscaling, export as <strong>16-bit TIFF</strong> in Adobe RGB for maximum color fidelity.</p>
+                    </div>
+
+                    <div class="section-title" style="margin-top: 24px;">Topaz Gigapixel Settings</div>
+                    <div class="color-profile-info">
+                        <p><strong>Recommended for Warhol:</strong></p>
+                        <p>• Model: <strong>Standard</strong> or <strong>Art & CG</strong></p>
+                        <p>• Scale: <strong>6x</strong> (2000px → 12000px)</p>
+                        <p>• Noise Reduction: <strong>Low</strong></p>
+                        <p>• Sharpen: <strong>Low-Medium</strong></p>
+                        <p>• Output: <strong>16-bit TIFF, Adobe RGB</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOURCES TAB -->
+        <div class="tab-content" id="sources">
+            <h2 style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">Andy Warhol - Your Collection</h2>
+            <div class="sources-grid">
+                <div class="source-card">
+                    <h3>Marilyn Monroe</h3>
+                    <p class="artist">Andy Warhol, 1967</p>
+                    <div class="links">
+                        <a href="https://www.moma.org/collection/works/61240" target="_blank">MoMA Portfolio</a>
+                        <a href="https://www.moma.org/collection/works/79737" target="_blank">Gold Marilyn</a>
+                    </div>
+                    <span class="size-badge">36 × 36"</span>
+                </div>
+
+                <div class="source-card">
+                    <h3>Jackie Kennedy</h3>
+                    <p class="artist">Andy Warhol, 1964</p>
+                    <div class="links">
+                        <a href="https://whitney.org/collection/works/1834" target="_blank">Whitney Museum</a>
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge">20 × 16"</span>
+                    <p class="size">Also: 40×40" (Sixteen Jackies)</p>
+                </div>
+
+                <div class="source-card">
+                    <h3>Moonwalk (Apollo 11)</h3>
+                    <p class="artist">Andy Warhol, 1987</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                </div>
+
+                <div class="source-card">
+                    <h3>John Lennon</h3>
+                    <p class="artist">Andy Warhol, 1986</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://www.denverartmuseum.org" target="_blank">Denver Art Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">40 × 40"</span>
+                </div>
+            </div>
+
+            <h2 style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 40px 0 20px;">Andy Warhol - Top Sellers (Record Auction Prices)</h2>
+            <div class="sources-grid">
+                <div class="source-card" style="border-left: 3px solid #f5a623;">
+                    <h3>Shot Sage Blue Marilyn</h3>
+                    <p class="artist">Andy Warhol, 1964 · <strong style="color: #7ed321;">$195 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.christies.com/lot/lot-6369449" target="_blank">Christie's</a>
+                        <a href="https://www.moma.org/collection/works/79836" target="_blank">MoMA (similar)</a>
+                    </div>
+                    <span class="size-badge xlarge">40 × 40"</span>
+                    <p class="size">Most expensive American artwork ever</p>
+                </div>
+
+                <div class="source-card">
+                    <h3>Silver Car Crash (Double Disaster)</h3>
+                    <p class="artist">Andy Warhol, 1963 · <strong style="color: #7ed321;">$105 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">100 × 80"</span>
+                    <p class="size">Death and Disaster series</p>
+                </div>
+
+                <div class="source-card">
+                    <h3>White Disaster (White Car Crash 19 Times)</h3>
+                    <p class="artist">Andy Warhol, 1963 · <strong style="color: #7ed321;">$85 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">131 × 83"</span>
+                    <p class="size">Death and Disaster series</p>
+                </div>
+
+                <div class="source-card">
+                    <h3>Triple Elvis [Ferus Type]</h3>
+                    <p class="artist">Andy Warhol, 1963 · <strong style="color: #7ed321;">$81.9 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://www.sfmoma.org" target="_blank">SFMOMA</a>
+                    </div>
+                    <span class="size-badge xlarge">82 × 60"</span>
+                </div>
+
+                <div class="source-card">
+                    <h3>Eight Elvises</h3>
+                    <p class="artist">Andy Warhol, 1963 · <strong style="color: #7ed321;">$100 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">114 × 82"</span>
+                </div>
+
+                <div class="source-card">
+                    <h3>Flowers</h3>
+                    <p class="artist">Andy Warhol, 1964 · <strong style="color: #7ed321;">$35.5 Million (2024)</strong></p>
+                    <div class="links">
+                        <a href="https://www.moma.org/collection/works/79809" target="_blank">MoMA</a>
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge">36 × 36"</span>
+                    <p class="size">Also: 5×5", 14×14", 24×24", 48×48"</p>
+                </div>
+
+                <div class="source-card">
+                    <h3>200 One Dollar Bills</h3>
+                    <p class="artist">Andy Warhol, 1962 · <strong style="color: #7ed321;">$43.8 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">80 × 92"</span>
+                </div>
+
+                <div class="source-card">
+                    <h3>Turquoise Marilyn</h3>
+                    <p class="artist">Andy Warhol, 1964 · <strong style="color: #7ed321;">$80 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge xlarge">40 × 40"</span>
+                </div>
+            </div>
+
+            <h2 style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 40px 0 20px;">Andy Warhol - Collector Secrets (Undervalued)</h2>
+            <div class="sources-grid">
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Ingrid Bergman</h3>
+                    <p class="artist">Andy Warhol, 1984 · "Lesser-known gem"</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://revolverwarholgallery.com/portfolio/ingrid-bergman/" target="_blank">Revolver Gallery</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                    <p class="size">Late career celebrity portrait</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Ten Portraits of Jews of the 20th Century</h3>
+                    <p class="artist">Andy Warhol, 1980</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://www.moma.org/artists/6246" target="_blank">MoMA</a>
+                    </div>
+                    <span class="size-badge xlarge">40 × 32"</span>
+                    <p class="size">Einstein, Kafka, Freud, Golda Meir</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Endangered Species</h3>
+                    <p class="artist">Andy Warhol, 1983 · High Demand</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://revolverwarholgallery.com/portfolio/endangered-species/" target="_blank">Revolver Gallery</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                    <p class="size">10 prints · Bald Eagle, Panda, Tiger</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Skull</h3>
+                    <p class="artist">Andy Warhol, 1976 · Small Set</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge">30 × 40"</span>
+                    <p class="size">Only 4 prints · Memento mori</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Space Fruit: Still Lifes</h3>
+                    <p class="artist">Andy Warhol, 1979 · Rising</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge">30 × 40"</span>
+                    <p class="size">Exceeded expectations Phillips 2025</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Ads Portfolio</h3>
+                    <p class="artist">Andy Warhol, 1985</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                        <a href="https://revolverwarholgallery.com/portfolio/ads/" target="_blank">Revolver Gallery</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                    <p class="size">Apple, Chanel, Van Heusen, VW</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Cowboys and Indians</h3>
+                    <p class="artist">Andy Warhol, 1986</p>
+                    <div class="links">
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge">36 × 36"</span>
+                    <p class="size">John Wayne, Geronimo, T. Roosevelt</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #9b59b6;">
+                    <h3>Trial Proofs (Any Series)</h3>
+                    <p class="artist">Andy Warhol · Rare</p>
+                    <div class="links">
+                        <a href="https://www.myartbroker.com/artist-andy-warhol" target="_blank">MyArtBroker</a>
+                    </div>
+                    <span class="size-badge">Varies</span>
+                    <p class="size">Pre-edition color tests · Rare</p>
+                </div>
+            </div>
+
+            <h2 style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 40px 0 20px;">Keith Haring</h2>
+            <div class="sources-grid">
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Radiant Baby</h3>
+                    <p class="artist">Keith Haring, 1982 · Signature Icon</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.metmuseum.org/art/collection/search/702916" target="_blank">The Met</a>
+                    </div>
+                    <span class="size-badge">20 × 20"</span>
+                    <p class="size">Also: 36×36", 48×48" editions</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Barking Dog</h3>
+                    <p class="artist">Keith Haring, 1980 · Iconic Symbol</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.moma.org/artists/2513" target="_blank">MoMA</a>
+                    </div>
+                    <span class="size-badge">20 × 24"</span>
+                    <p class="size">Critique of power abuse</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Pop Shop Series</h3>
+                    <p class="artist">Keith Haring, 1986-89</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.thebroad.org/art/special-exhibitions/keith-haring-art-everybody" target="_blank">The Broad</a>
+                    </div>
+                    <span class="size-badge">13 × 17"</span>
+                    <p class="size">Also: 11×14" individual prints</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Andy Mouse</h3>
+                    <p class="artist">Keith Haring, 1986</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.warhol.org/art/" target="_blank">Warhol Museum</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                    <p class="size">Mickey + Warhol fusion</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Crack is Wack</h3>
+                    <p class="artist">Keith Haring, 1986 · Public Mural</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge xlarge">20 × 40 ft</span>
+                    <p class="size">Harlem mural (prints: 30×40")</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Untitled (Dancing Figures)</h3>
+                    <p class="artist">Keith Haring, 1982 · <strong style="color: #7ed321;">$6.5 Million</strong></p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.metmuseum.org/art/collection/search/702916" target="_blank">The Met</a>
+                    </div>
+                    <span class="size-badge xlarge">96 × 96"</span>
+                    <p class="size">Most expensive Haring</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Silence = Death</h3>
+                    <p class="artist">Keith Haring, 1989 · AIDS Activism</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge">24 × 33"</span>
+                    <p class="size">ACT UP collaboration</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #ff6b6b;">
+                    <h3>Subway Drawings</h3>
+                    <p class="artist">Keith Haring, 1980-85</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://www.moma.org/artists/2513" target="_blank">MoMA</a>
+                    </div>
+                    <span class="size-badge">~46 × 46"</span>
+                    <p class="size">Chalk on ad panels · NYC subway</p>
+                </div>
+            </div>
+
+            <h2 style="font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 40px 0 20px;">Keith Haring - Collector Secrets (Undervalued/Rare)</h2>
+            <div class="sources-grid">
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Fertility Suite</h3>
+                    <p class="artist">Keith Haring, 1983 · Early Career</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                        <a href="https://guyhepner.com/artists/40-keith-haring/" target="_blank">Guy Hepner</a>
+                    </div>
+                    <span class="size-badge xlarge">42 × 52"</span>
+                    <p class="size">Edition of 100 · Large scale</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Andy Mouse (Rare Edition)</h3>
+                    <p class="artist">Keith Haring, 1986 · <strong style="color: #f5a623;">Edition of only 30!</strong></p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge large">38 × 38"</span>
+                    <p class="size">Extremely rare edition</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Dog Series (Special Proofs)</h3>
+                    <p class="artist">Keith Haring, 1985 · <strong style="color: #7ed321;">Over £100k at auction</strong></p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge">24 × 30"</span>
+                    <p class="size">Cut-out sculptures · Trial proofs</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Flowers Collection</h3>
+                    <p class="artist">Keith Haring · Highest Valued</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge">22 × 30"</span>
+                    <p class="size">Rarest series · High demand</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Statue of Liberty</h3>
+                    <p class="artist">Keith Haring, 1986</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge large">38 × 50"</span>
+                    <p class="size">Appreciating · American icon</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Growing</h3>
+                    <p class="artist">Keith Haring, 1988</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge large">38 × 48"</span>
+                    <p class="size">5 prints · Strong appreciation</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Best Buddies</h3>
+                    <p class="artist">Keith Haring, 1989</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge">22 × 30"</span>
+                    <p class="size">Late career · Undervalued</p>
+                </div>
+
+                <div class="source-card" style="border-left: 3px solid #e74c3c;">
+                    <h3>Totem</h3>
+                    <p class="artist">Keith Haring, 1989</p>
+                    <div class="links">
+                        <a href="https://www.haring.com/" target="_blank">Haring Foundation</a>
+                    </div>
+                    <span class="size-badge xlarge">40 × 60"</span>
+                    <p class="size">Year before death · Sleeper</p>
+                </div>
+            </div>
+
+            <div class="workflow-section">
+                <h3>Workflow</h3>
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="number">1</div>
+                        <h4>Download</h4>
+                        <p>Right-click image → Open in new tab → Save As</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="number">2</div>
+                        <h4>Upscale</h4>
+                        <p>Topaz Gigapixel AI → 6x scale → Export 16-bit TIFF</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="number">3</div>
+                        <h4>Print</h4>
+                        <p>Drop into Print tab → Select paper → Print</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" style="display: none">
+
+    <script>
+        // Default paper profiles for P9750
+        const defaultPapers = [
+            // Epson Papers
+            { id: 'epson-matte', name: 'Epson Premium Matte', surface: 'matte', weight: 192, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'epson-luster', name: 'Epson Premium Luster', surface: 'luster', weight: 260, ink: 'photo', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'epson-glossy', name: 'Epson Premium Glossy', surface: 'glossy', weight: 250, ink: 'photo', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'epson-canvas-matte', name: 'Epson Premium Canvas Matte', surface: 'canvas', weight: 375, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'epson-canvas-satin', name: 'Epson Premium Canvas Satin', surface: 'canvas', weight: 350, ink: 'photo', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'epson-velvet', name: 'Epson Velvet Fine Art', surface: 'fineart', weight: 260, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'epson-watercolor', name: 'Epson Watercolor Radiant White', surface: 'watercolor', weight: 190, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'epson-hotpress-bright', name: 'Epson Hot Press Bright', surface: 'fineart', weight: 330, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'epson-hotpress-natural', name: 'Epson Hot Press Natural', surface: 'fineart', weight: 330, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'epson-coldpress-bright', name: 'Epson Cold Press Bright', surface: 'watercolor', weight: 340, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'epson-coldpress-natural', name: 'Epson Cold Press Natural', surface: 'watercolor', weight: 340, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+
+            // Arches Papers
+            { id: 'arches-hotpress', name: 'Arches Aquarelle Hot Press', surface: 'fineart', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'arches-coldpress', name: 'Arches Aquarelle Cold Press', surface: 'watercolor', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'arches-bright-white', name: 'Arches BFK Rives White', surface: 'fineart', weight: 310, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+            { id: 'arches-88', name: 'Arches 88 (100% Cotton)', surface: 'fineart', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+
+            // Bristol Papers
+            { id: 'bristol-smooth', name: 'Bristol Smooth (Plate)', surface: 'matte', weight: 270, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'bristol-vellum', name: 'Bristol Vellum', surface: 'fineart', weight: 270, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'legion-bristol', name: 'Legion Stonehenge Aqua Hot Press', surface: 'fineart', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+
+            // Hahnemühle Papers
+            { id: 'hahnemuhle-rag', name: 'Hahnemühle Photo Rag 308', surface: 'fineart', weight: 308, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'hahnemuhle-bamboo', name: 'Hahnemühle Bamboo 290', surface: 'fineart', weight: 290, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'hahnemuhle-german-etching', name: 'Hahnemühle German Etching 310', surface: 'fineart', weight: 310, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'hahnemuhle-torchon', name: 'Hahnemühle Torchon 285', surface: 'watercolor', weight: 285, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+
+            // Canson Papers
+            { id: 'canson-rag', name: 'Canson Infinity Rag Photographique', surface: 'fineart', weight: 310, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'canson-platine', name: 'Canson Platine Fibre Rag', surface: 'luster', weight: 310, ink: 'photo', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'canson-aquarelle', name: 'Canson Infinity Aquarelle Rag', surface: 'watercolor', weight: 310, ink: 'matte', width: 44, suction: 'low', platen: 'wider' },
+
+            // Moab Papers
+            { id: 'moab-entrada', name: 'Moab Entrada Rag Natural 300', surface: 'fineart', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'moab-entrada-bright', name: 'Moab Entrada Rag Bright 300', surface: 'fineart', weight: 300, ink: 'matte', width: 44, suction: 'low', platen: 'wide' },
+            { id: 'moab-somerset', name: 'Moab Somerset Enhanced Velvet', surface: 'fineart', weight: 255, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+
+            // Red River Papers
+            { id: 'redriver-aurora', name: 'Red River Aurora Art Natural', surface: 'fineart', weight: 285, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+            { id: 'redriver-polar', name: 'Red River Polar Matte', surface: 'matte', weight: 230, ink: 'matte', width: 44, suction: 'standard', platen: 'auto' },
+        ];
+
+        // Load papers from localStorage or use defaults
+        let papers = JSON.parse(localStorage.getItem('artprint-papers')) || defaultPapers;
+
+        // DOM elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImg = document.getElementById('previewImg');
+        const filenameEl = document.getElementById('filename');
+        const dimensionsEl = document.getElementById('dimensions');
+        const dpiEl = document.getElementById('dpi');
+        const qualityEl = document.getElementById('quality');
+        const printBtn = document.getElementById('printBtn');
+        const customW = document.getElementById('customW');
+        const customH = document.getElementById('customH');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+        const paperSelect = document.getElementById('paperSelect');
+        const blackInkSelect = document.getElementById('blackInk');
+        const inkIndicator = document.getElementById('inkIndicator');
+        const paperList = document.getElementById('paperList');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        let currentImage = null;
+        let printWidth = 40;
+        let printHeight = 40;
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Render paper select dropdown
+        function renderPaperSelect() {
+            paperSelect.innerHTML = papers.map(p =>
+                `<option value="${p.id}">${p.name} (${p.weight}gsm, ${p.ink === 'matte' ? 'MK' : 'PK'})</option>`
+            ).join('');
+            updateInkIndicator();
+        }
+
+        // Render paper list in settings
+        function renderPaperList() {
+            paperList.innerHTML = papers.map(p => `
+                <div class="paper-item" data-id="${p.id}">
+                    <div>
+                        <div class="paper-item-name">${p.name}</div>
+                        <div class="paper-item-type">${p.surface} · ${p.weight}gsm · ${p.ink === 'matte' ? 'Matte Black' : 'Photo Black'} · ${p.width}"</div>
+                    </div>
+                    ${!p.id.startsWith('epson-') && !p.id.startsWith('hahnemuhle-') && !p.id.startsWith('canson-') && !p.id.startsWith('moab-') ?
+                        `<button class="paper-item-delete" data-id="${p.id}">×</button>` : ''}
+                </div>
+            `).join('');
+
+            // Delete button handlers
+            document.querySelectorAll('.paper-item-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    papers = papers.filter(p => p.id !== btn.dataset.id);
+                    savePapers();
+                    renderPaperList();
+                    renderPaperSelect();
+                });
+            });
+        }
+
+        // Save papers to localStorage
+        function savePapers() {
+            localStorage.setItem('artprint-papers', JSON.stringify(papers));
+        }
+
+        // Update ink indicator based on selected paper
+        function updateInkIndicator() {
+            const selectedPaper = papers.find(p => p.id === paperSelect.value);
+            if (selectedPaper) {
+                if (blackInkSelect.value === 'auto') {
+                    inkIndicator.textContent = selectedPaper.ink === 'matte' ? 'Matte Black' : 'Photo Black';
+                    inkIndicator.className = 'ink-indicator ' + (selectedPaper.ink === 'matte' ? 'ink-matte' : 'ink-photo');
+                } else {
+                    inkIndicator.textContent = blackInkSelect.value === 'matte' ? 'Matte Black' : 'Photo Black';
+                    inkIndicator.className = 'ink-indicator ' + (blackInkSelect.value === 'matte' ? 'ink-matte' : 'ink-photo');
+                }
+            }
+        }
+
+        paperSelect.addEventListener('change', () => {
+            updateInkIndicator();
+            updatePaperSettings();
+        });
+        blackInkSelect.addEventListener('change', updateInkIndicator);
+
+        // Auto-update platen/suction based on paper selection
+        function updatePaperSettings() {
+            const selectedPaper = papers.find(p => p.id === paperSelect.value);
+            if (selectedPaper) {
+                // Set platen gap
+                const platenSelect = document.getElementById('platenGap');
+                if (selectedPaper.platen) {
+                    platenSelect.value = selectedPaper.platen;
+                }
+                // Set suction
+                const suctionSelect = document.getElementById('suction');
+                if (selectedPaper.suction) {
+                    suctionSelect.value = selectedPaper.suction;
+                }
+                // Set drying time for thick papers
+                const dryingSelect = document.getElementById('dryingTime');
+                if (selectedPaper.weight >= 300) {
+                    dryingSelect.value = 'longer';
+                } else if (selectedPaper.weight >= 350) {
+                    dryingSelect.value = 'longest';
+                } else {
+                    dryingSelect.value = 'standard';
+                }
+            }
+        }
+
+        // Add paper button
+        document.getElementById('addPaperBtn').addEventListener('click', () => {
+            const name = document.getElementById('newPaperName').value.trim();
+            if (!name) return alert('Please enter a paper name');
+
+            const newPaper = {
+                id: 'custom-' + Date.now(),
+                name: name,
+                surface: document.getElementById('newPaperSurface').value,
+                weight: parseInt(document.getElementById('newPaperWeight').value) || 0,
+                ink: document.getElementById('newPaperInk').value,
+                width: parseInt(document.getElementById('newPaperWidth').value) || 44
+            };
+
+            papers.push(newPaper);
+            savePapers();
+            renderPaperList();
+            renderPaperSelect();
+
+            // Clear form
+            document.getElementById('newPaperName').value = '';
+            document.getElementById('newPaperWeight').value = '';
+            document.getElementById('newPaperWidth').value = '';
+        });
+
+        // Drop zone events
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        // Handle file
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = { width: img.width, height: img.height, src: e.target.result, name: file.name };
+                    previewImg.src = e.target.result;
+                    filenameEl.textContent = file.name;
+                    dropZone.style.display = 'none';
+                    previewContainer.classList.add('active');
+                    printBtn.disabled = false;
+                    updateStats();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Update stats
+        function updateStats() {
+            if (!currentImage) return;
+
+            dimensionsEl.textContent = `${currentImage.width.toLocaleString()} × ${currentImage.height.toLocaleString()} px`;
+
+            const dpiW = currentImage.width / printWidth;
+            const dpiH = currentImage.height / printHeight;
+            const dpi = Math.round(Math.min(dpiW, dpiH));
+
+            dpiEl.textContent = `${dpi} DPI`;
+
+            if (dpi >= 300) {
+                dpiEl.className = 'stat-value good';
+                qualityEl.textContent = 'Excellent - Museum quality';
+                qualityEl.className = 'stat-value good';
+            } else if (dpi >= 150) {
+                dpiEl.className = 'stat-value good';
+                qualityEl.textContent = 'Good - Fine at viewing distance';
+                qualityEl.className = 'stat-value good';
+            } else if (dpi >= 100) {
+                dpiEl.className = 'stat-value warning';
+                qualityEl.textContent = 'Acceptable - Consider upscaling';
+                qualityEl.className = 'stat-value warning';
+            } else {
+                dpiEl.className = 'stat-value bad';
+                qualityEl.textContent = 'Low - Upscale in Topaz first';
+                qualityEl.className = 'stat-value bad';
+            }
+        }
+
+        // Preset buttons
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                presetBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                printWidth = parseInt(btn.dataset.w);
+                printHeight = parseInt(btn.dataset.h);
+                customW.value = printWidth;
+                customH.value = printHeight;
+                updateStats();
+            });
+        });
+
+        // Custom size inputs
+        customW.addEventListener('input', () => {
+            printWidth = parseInt(customW.value) || 1;
+            presetBtns.forEach(b => b.classList.remove('active'));
+            updateStats();
+        });
+        customH.addEventListener('input', () => {
+            printHeight = parseInt(customH.value) || 1;
+            presetBtns.forEach(b => b.classList.remove('active'));
+            updateStats();
+        });
+
+        // Print button
+        printBtn.addEventListener('click', () => {
+            const selectedPaper = papers.find(p => p.id === paperSelect.value);
+            const quality = document.getElementById('printQuality').value;
+            const colorMode = document.getElementById('colorMode').value;
+            const blackInk = blackInkSelect.value === 'auto' ? selectedPaper.ink : blackInkSelect.value;
+            const renderingIntent = document.getElementById('renderingIntent').value;
+            const blackPoint = document.getElementById('blackPoint').value;
+            const platenGap = document.getElementById('platenGap').value;
+            const suction = document.getElementById('suction').value;
+            const dryingTime = document.getElementById('dryingTime').value;
+
+            // Create print window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Print - ${currentImage.name}</title>
+                    <style>
+                        @page {
+                            size: ${printWidth}in ${printHeight}in;
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: ${printWidth}in;
+                            height: ${printHeight}in;
+                            background: white;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                        }
+                        @media screen {
+                            body {
+                                background: #333;
+                                min-height: 100vh;
+                                width: auto;
+                                height: auto;
+                            }
+                            .info {
+                                position: fixed;
+                                top: 20px;
+                                left: 20px;
+                                background: rgba(0,0,0,0.9);
+                                color: white;
+                                padding: 24px;
+                                border-radius: 12px;
+                                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                                font-size: 14px;
+                                line-height: 1.6;
+                                max-width: 320px;
+                            }
+                            .info h3 {
+                                margin: 0 0 16px 0;
+                                font-size: 16px;
+                                border-bottom: 1px solid #444;
+                                padding-bottom: 12px;
+                            }
+                            .info .row {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 8px;
+                            }
+                            .info .label { color: #888; }
+                            .info .value { color: #fff; font-weight: 500; }
+                            .info .note {
+                                margin-top: 16px;
+                                padding-top: 16px;
+                                border-top: 1px solid #444;
+                                color: #888;
+                                font-size: 13px;
+                            }
+                        }
+                        @media print {
+                            .info { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="info">
+                        <h3>P9750 Print Settings</h3>
+                        <div class="row"><span class="label">Size</span><span class="value">${printWidth}" × ${printHeight}"</span></div>
+                        <div class="row"><span class="label">Paper</span><span class="value">${selectedPaper.name}</span></div>
+                        <div class="row"><span class="label">Black Ink</span><span class="value">${blackInk === 'matte' ? 'Matte Black' : 'Photo Black'}</span></div>
+                        <div class="row"><span class="label">Quality</span><span class="value">${quality === 'best' ? '2880×1440' : quality === 'high' ? '1440×1440' : '720×720'} dpi</span></div>
+                        <div class="row"><span class="label">Color</span><span class="value">${colorMode === 'adobergb' ? 'Adobe RGB' : colorMode === 'srgb' ? 'sRGB' : 'Printer'}</span></div>
+                        <div class="row"><span class="label">Intent</span><span class="value">${renderingIntent}</span></div>
+                        <div class="row"><span class="label">Black Point</span><span class="value">${blackPoint}</span></div>
+                        <div class="row"><span class="label">Platen Gap</span><span class="value">${platenGap}</span></div>
+                        <div class="row"><span class="label">Suction</span><span class="value">${suction}</span></div>
+                        <div class="row"><span class="label">Drying</span><span class="value">${dryingTime}</span></div>
+                        <div class="note">
+                            Press <strong>⌘P</strong> to print<br>
+                            Select "Epson P9750" as printer<br>
+                            Match paper type in driver dialog
+                        </div>
+                    </div>
+                    <img src="${currentImage.src}">
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        });
+
+        // Initialize
+        renderPaperSelect();
+        renderPaperList();
+        updatePaperSettings();
+
+        // ============ COLLECTION TAB ============
+        const collectionGrid = document.getElementById('collectionGrid');
+        const addImagesBtn = document.getElementById('addImagesBtn');
+        const sortBySelect = document.getElementById('sortBy');
+        const filterArtistSelect = document.getElementById('filterArtist');
+        const collectionFileInput = document.createElement('input');
+        collectionFileInput.type = 'file';
+        collectionFileInput.accept = 'image/*';
+        collectionFileInput.multiple = true;
+        collectionFileInput.style.display = 'none';
+        document.body.appendChild(collectionFileInput);
+
+        // Preloaded collection from downloaded images (746 total)
+        const preloadedCollection = [
+          {path:"Images/Warhol/WA_41a40167.jpg",fn:"WA_41a40167.jpg",w:2296,h:3200,a:"Andy Warhol",t:"41a40167",y:"",pw:36,ph:36,dpi:63,sz:"259 KB"},
+          {path:"Images/Warhol/WA_bf58d6a9.jpg",fn:"WA_bf58d6a9.jpg",w:2449,h:3200,a:"Andy Warhol",t:"bf58d6a9",y:"",pw:36,ph:36,dpi:68,sz:"2.6 MB"},
+          {path:"Images/Warhol/W_0799f5b1.jpg",fn:"W_0799f5b1.jpg",w:2848,h:2250,a:"Andy Warhol",t:"0799f5b1",y:"",pw:36,ph:36,dpi:62,sz:"1.4 MB"},
+          {path:"Images/Warhol/W_0b1b017e.jpg",fn:"W_0b1b017e.jpg",w:3000,h:2352,a:"Andy Warhol",t:"0b1b017e",y:"",pw:36,ph:36,dpi:65,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_10d33fb0.jpg",fn:"W_10d33fb0.jpg",w:3000,h:2351,a:"Andy Warhol",t:"10d33fb0",y:"",pw:36,ph:36,dpi:65,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_16e5c8c7.jpg",fn:"W_16e5c8c7.jpg",w:3000,h:2336,a:"Andy Warhol",t:"16e5c8c7",y:"",pw:36,ph:36,dpi:64,sz:"2.8 MB"},
+          {path:"Images/Warhol/W_186eb0af.jpg",fn:"W_186eb0af.jpg",w:3000,h:2348,a:"Andy Warhol",t:"186eb0af",y:"",pw:36,ph:36,dpi:65,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_1c1caa8b.jpg",fn:"W_1c1caa8b.jpg",w:3000,h:2369,a:"Andy Warhol",t:"1c1caa8b",y:"",pw:36,ph:36,dpi:65,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_1e64f33c.jpg",fn:"W_1e64f33c.jpg",w:3000,h:2310,a:"Andy Warhol",t:"1e64f33c",y:"",pw:36,ph:36,dpi:64,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_2278dcf7.jpg",fn:"W_2278dcf7.jpg",w:3000,h:2308,a:"Andy Warhol",t:"2278dcf7",y:"",pw:36,ph:36,dpi:64,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_2d3cebbb.jpg",fn:"W_2d3cebbb.jpg",w:3000,h:2355,a:"Andy Warhol",t:"2d3cebbb",y:"",pw:36,ph:36,dpi:65,sz:"1.6 MB"},
+          {path:"Images/Warhol/W_3fec2f17.jpg",fn:"W_3fec2f17.jpg",w:3000,h:2345,a:"Andy Warhol",t:"3fec2f17",y:"",pw:36,ph:36,dpi:65,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_447df32f.jpg",fn:"W_447df32f.jpg",w:3000,h:2357,a:"Andy Warhol",t:"447df32f",y:"",pw:36,ph:36,dpi:65,sz:"2.2 MB"},
+          {path:"Images/Warhol/W_44d9b184.jpg",fn:"W_44d9b184.jpg",w:3000,h:2346,a:"Andy Warhol",t:"44d9b184",y:"",pw:36,ph:36,dpi:65,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_4624af95.jpg",fn:"W_4624af95.jpg",w:3000,h:2327,a:"Andy Warhol",t:"4624af95",y:"",pw:36,ph:36,dpi:64,sz:"1.6 MB"},
+          {path:"Images/Warhol/W_4e590476.jpg",fn:"W_4e590476.jpg",w:3000,h:2328,a:"Andy Warhol",t:"4e590476",y:"",pw:36,ph:36,dpi:64,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_607962f3.jpg",fn:"W_607962f3.jpg",w:2940,h:2250,a:"Andy Warhol",t:"607962f3",y:"",pw:36,ph:36,dpi:62,sz:"1.3 MB"},
+          {path:"Images/Warhol/W_6792909a.jpg",fn:"W_6792909a.jpg",w:3000,h:2373,a:"Andy Warhol",t:"6792909a",y:"",pw:36,ph:36,dpi:65,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_6bdc1f83.jpg",fn:"W_6bdc1f83.jpg",w:3000,h:2348,a:"Andy Warhol",t:"6bdc1f83",y:"",pw:36,ph:36,dpi:65,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_70b2e479.jpg",fn:"W_70b2e479.jpg",w:3000,h:2325,a:"Andy Warhol",t:"70b2e479",y:"",pw:36,ph:36,dpi:64,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_7a74fbe5.jpg",fn:"W_7a74fbe5.jpg",w:3000,h:2370,a:"Andy Warhol",t:"7a74fbe5",y:"",pw:36,ph:36,dpi:65,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_8a538292.jpg",fn:"W_8a538292.jpg",w:3000,h:2337,a:"Andy Warhol",t:"8a538292",y:"",pw:36,ph:36,dpi:64,sz:"2.6 MB"},
+          {path:"Images/Warhol/W_8af166df.jpg",fn:"W_8af166df.jpg",w:3000,h:2308,a:"Andy Warhol",t:"8af166df",y:"",pw:36,ph:36,dpi:64,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_8bd9f73c.jpg",fn:"W_8bd9f73c.jpg",w:3000,h:2344,a:"Andy Warhol",t:"8bd9f73c",y:"",pw:36,ph:36,dpi:65,sz:"2.2 MB"},
+          {path:"Images/Warhol/W_8eb89ac4.jpg",fn:"W_8eb89ac4.jpg",w:2438,h:3000,a:"Andy Warhol",t:"8eb89ac4",y:"",pw:36,ph:36,dpi:67,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_92e493fb.jpg",fn:"W_92e493fb.jpg",w:3000,h:2348,a:"Andy Warhol",t:"92e493fb",y:"",pw:36,ph:36,dpi:65,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_94768d20.jpg",fn:"W_94768d20.jpg",w:3000,h:2376,a:"Andy Warhol",t:"94768d20",y:"",pw:36,ph:36,dpi:66,sz:"1.6 MB"},
+          {path:"Images/Warhol/W_95b0f496.jpg",fn:"W_95b0f496.jpg",w:3000,h:2332,a:"Andy Warhol",t:"95b0f496",y:"",pw:36,ph:36,dpi:64,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_990490f5.jpg",fn:"W_990490f5.jpg",w:3000,h:2329,a:"Andy Warhol",t:"990490f5",y:"",pw:36,ph:36,dpi:64,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_9b135dff.jpg",fn:"W_9b135dff.jpg",w:3000,h:2307,a:"Andy Warhol",t:"9b135dff",y:"",pw:36,ph:36,dpi:64,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_9c039af6.jpg",fn:"W_9c039af6.jpg",w:3000,h:2172,a:"Andy Warhol",t:"9c039af6",y:"",pw:36,ph:36,dpi:60,sz:"3.3 MB"},
+          {path:"Images/Warhol/W_9f202b13.jpg",fn:"W_9f202b13.jpg",w:3000,h:2335,a:"Andy Warhol",t:"9f202b13",y:"",pw:36,ph:36,dpi:64,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_9f9c37b1.jpg",fn:"W_9f9c37b1.jpg",w:3000,h:2317,a:"Andy Warhol",t:"9f9c37b1",y:"",pw:36,ph:36,dpi:64,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_a0995727.jpg",fn:"W_a0995727.jpg",w:2143,h:3000,a:"Andy Warhol",t:"a0995727",y:"",pw:36,ph:36,dpi:59,sz:"1.5 MB"},
+          {path:"Images/Warhol/W_a554c4dd.jpg",fn:"W_a554c4dd.jpg",w:2914,h:2250,a:"Andy Warhol",t:"a554c4dd",y:"",pw:36,ph:36,dpi:62,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_a9284eaf.jpg",fn:"W_a9284eaf.jpg",w:2179,h:3000,a:"Andy Warhol",t:"a9284eaf",y:"",pw:36,ph:36,dpi:60,sz:"2.9 MB"},
+          {path:"Images/Warhol/W_ac75bfca.jpg",fn:"W_ac75bfca.jpg",w:3000,h:2310,a:"Andy Warhol",t:"ac75bfca",y:"",pw:36,ph:36,dpi:64,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_b3e83124.jpg",fn:"W_b3e83124.jpg",w:3000,h:2327,a:"Andy Warhol",t:"b3e83124",y:"",pw:36,ph:36,dpi:64,sz:"1.9 MB"},
+          {path:"Images/Warhol/W_b9ea855c.jpg",fn:"W_b9ea855c.jpg",w:3000,h:2323,a:"Andy Warhol",t:"b9ea855c",y:"",pw:36,ph:36,dpi:64,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_bd0e13a1.jpg",fn:"W_bd0e13a1.jpg",w:2328,h:3000,a:"Andy Warhol",t:"bd0e13a1",y:"",pw:36,ph:36,dpi:64,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_bdb76639.jpg",fn:"W_bdb76639.jpg",w:3000,h:2354,a:"Andy Warhol",t:"bdb76639",y:"",pw:36,ph:36,dpi:65,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_be0ccba9.jpg",fn:"W_be0ccba9.jpg",w:3000,h:2354,a:"Andy Warhol",t:"be0ccba9",y:"",pw:36,ph:36,dpi:65,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_bedb738c.jpg",fn:"W_bedb738c.jpg",w:2914,h:2250,a:"Andy Warhol",t:"bedb738c",y:"",pw:36,ph:36,dpi:62,sz:"1.6 MB"},
+          {path:"Images/Warhol/W_bfa7d858.jpg",fn:"W_bfa7d858.jpg",w:3000,h:2323,a:"Andy Warhol",t:"bfa7d858",y:"",pw:36,ph:36,dpi:64,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_c8ac28cc.jpg",fn:"W_c8ac28cc.jpg",w:3000,h:2327,a:"Andy Warhol",t:"c8ac28cc",y:"",pw:36,ph:36,dpi:64,sz:"2.3 MB"},
+          {path:"Images/Warhol/W_c9655a30.jpg",fn:"W_c9655a30.jpg",w:3000,h:2277,a:"Andy Warhol",t:"c9655a30",y:"",pw:36,ph:36,dpi:63,sz:"2.1 MB"},
+          {path:"Images/Warhol/W_d0294e81.jpg",fn:"W_d0294e81.jpg",w:3000,h:2345,a:"Andy Warhol",t:"d0294e81",y:"",pw:36,ph:36,dpi:65,sz:"1.5 MB"},
+          {path:"Images/Warhol/W_d055d0d0.jpg",fn:"W_d055d0d0.jpg",w:2284,h:2250,a:"Andy Warhol",t:"d055d0d0",y:"",pw:36,ph:36,dpi:62,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_de7adc13.jpg",fn:"W_de7adc13.jpg",w:3000,h:2344,a:"Andy Warhol",t:"de7adc13",y:"",pw:36,ph:36,dpi:65,sz:"2.2 MB"},
+          {path:"Images/Warhol/W_e3734c60.jpg",fn:"W_e3734c60.jpg",w:3000,h:2349,a:"Andy Warhol",t:"e3734c60",y:"",pw:36,ph:36,dpi:65,sz:"1.5 MB"},
+          {path:"Images/Warhol/W_e3c8355b.jpg",fn:"W_e3c8355b.jpg",w:3000,h:2257,a:"Andy Warhol",t:"e3c8355b",y:"",pw:36,ph:36,dpi:62,sz:"1.7 MB"},
+          {path:"Images/Warhol/W_ef98cb10.jpg",fn:"W_ef98cb10.jpg",w:3000,h:2355,a:"Andy Warhol",t:"ef98cb10",y:"",pw:36,ph:36,dpi:65,sz:"2.0 MB"},
+          {path:"Images/Warhol/W_efa8a2e8.jpg",fn:"W_efa8a2e8.jpg",w:3000,h:2356,a:"Andy Warhol",t:"efa8a2e8",y:"",pw:36,ph:36,dpi:65,sz:"2.5 MB"},
+          {path:"Images/Warhol/W_f1bbdcf1.jpg",fn:"W_f1bbdcf1.jpg",w:3000,h:2352,a:"Andy Warhol",t:"f1bbdcf1",y:"",pw:36,ph:36,dpi:65,sz:"2.6 MB"},
+          {path:"Images/Warhol/W_f55da871.jpg",fn:"W_f55da871.jpg",w:3000,h:2356,a:"Andy Warhol",t:"f55da871",y:"",pw:36,ph:36,dpi:65,sz:"1.8 MB"},
+          {path:"Images/Warhol/W_f61a7665.jpg",fn:"W_f61a7665.jpg",w:3000,h:2366,a:"Andy Warhol",t:"f61a7665",y:"",pw:36,ph:36,dpi:65,sz:"2.9 MB"},
+          {path:"Images/Warhol/W_fdd14e4c.jpg",fn:"W_fdd14e4c.jpg",w:3000,h:2224,a:"Andy Warhol",t:"fdd14e4c",y:"",pw:36,ph:36,dpi:61,sz:"3.0 MB"},
+          {path:"Images/Warhol/Warhol_Ame02128_3008x2000.jpg",fn:"Warhol_Ame02128_3008x2000.jpg",w:3008,h:2000,a:"Andy Warhol",t:"Ame02128 3008x2000",y:"",pw:36,ph:36,dpi:55,sz:"2.0 MB"},
+          {path:"Images/Warhol/Warhol_Campbells_Soup_MoMA.jpg",fn:"Warhol_Campbells_Soup_MoMA.jpg",w:3008,h:2000,a:"Andy Warhol",t:"Campbells Soup MoMA",y:"",pw:36,ph:36,dpi:55,sz:"2.0 MB"},
+          {path:"Images/Warhol/Warhol_Mao_AIC.jpg",fn:"Warhol_Mao_AIC.jpg",w:3000,h:2375,a:"Andy Warhol",t:"Mao AIC",y:"",pw:36,ph:36,dpi:65,sz:"3.2 MB"},
+          {path:"Images/Haring/Haring_AIC_1a1ddcd7.jpg",fn:"Haring_AIC_1a1ddcd7.jpg",w:3000,h:2320,a:"Keith Haring",t:"AIC 1a1ddcd7",y:"",pw:36,ph:36,dpi:64,sz:"932 KB"},
+          {path:"Images/Haring/Haring_AIC_329b85e4.jpg",fn:"Haring_AIC_329b85e4.jpg",w:3000,h:2320,a:"Keith Haring",t:"AIC 329b85e4",y:"",pw:36,ph:36,dpi:64,sz:"3.2 MB"},
+          {path:"Images/Haring/Haring_AIC_a9a3e2fa.jpg",fn:"Haring_AIC_a9a3e2fa.jpg",w:2517,h:3000,a:"Keith Haring",t:"AIC a9a3e2fa",y:"",pw:36,ph:36,dpi:69,sz:"1.8 MB"},
+          {path:"Images/Haring/Haring_AIC_d0c6be1f.jpg",fn:"Haring_AIC_d0c6be1f.jpg",w:2970,h:2250,a:"Keith Haring",t:"AIC d0c6be1f",y:"",pw:36,ph:36,dpi:62,sz:"753 KB"},
+          {path:"Images/Haring/KH_476bf644.jpg",fn:"KH_476bf644.jpg",w:4690,h:4692,a:"Keith Haring",t:"476bf644",y:"",pw:36,ph:36,dpi:130,sz:"4.6 MB"},
+          {path:"Images/Haring/KH_d3737cf8.jpg",fn:"KH_d3737cf8.jpg",w:3384,h:2700,a:"Keith Haring",t:"d3737cf8",y:"",pw:36,ph:36,dpi:75,sz:"1.0 MB"},
+          {path:"Images/ShepardFairey/10_Obey_OBEY-Elephant_P.png",fn:"10_Obey_OBEY-Elephant_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"10 OBEY-Elephant P",y:"",pw:36,ph:36,dpi:100,sz:"25.4 MB"},
+          {path:"Images/ShepardFairey/10_Obey_OBEY-Elephant_P_crop_1.jpg",fn:"10_Obey_OBEY-Elephant_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"10 OBEY-Elephant P",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/11_Obey_Paul-McCartney-Change-Begins-P_P.png",fn:"11_Obey_Paul-McCartney-Change-Begins-P_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"11 Paul-McCartney-Change-Begins-P P",y:"",pw:36,ph:36,dpi:100,sz:"18.4 MB"},
+          {path:"Images/ShepardFairey/11_Obey_Paul-McCartney-Change-Begins-P_P_crop_1.jpg",fn:"11_Obey_Paul-McCartney-Change-Begins-P_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"11 Paul-McCartney-Change-Begins-P P",y:"",pw:36,ph:36,dpi:86,sz:"2.4 MB"},
+          {path:"Images/ShepardFairey/12_Obey_Global-Warning_P.png",fn:"12_Obey_Global-Warning_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"12 Global-Warning P",y:"",pw:36,ph:36,dpi:100,sz:"25.4 MB"},
+          {path:"Images/ShepardFairey/12_Obey_Global-Warning_P_crop_1.jpg",fn:"12_Obey_Global-Warning_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"12 Global-Warning P",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/13_Obey_Sun-Paper-Print_P.png",fn:"13_Obey_Sun-Paper-Print_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"13 Sun-Paper-Print P",y:"",pw:36,ph:36,dpi:100,sz:"22.9 MB"},
+          {path:"Images/ShepardFairey/13_Obey_Sun-Paper-Print_P_crop_1.jpg",fn:"13_Obey_Sun-Paper-Print_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"13 Sun-Paper-Print P",y:"",pw:36,ph:36,dpi:86,sz:"2.9 MB"},
+          {path:"Images/ShepardFairey/14_Obey_Let-Fury-Have-the-Hour-Print_P.png",fn:"14_Obey_Let-Fury-Have-the-Hour-Print_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"14 Let-Fury-Have-the-Hour-Print P",y:"",pw:36,ph:36,dpi:100,sz:"23.3 MB"},
+          {path:"Images/ShepardFairey/14_Obey_Let-Fury-Have-the-Hour-Print_P_crop_1.jpg",fn:"14_Obey_Let-Fury-Have-the-Hour-Print_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"14 Let-Fury-Have-the-Hour-Print P",y:"",pw:36,ph:36,dpi:86,sz:"3.1 MB"},
+          {path:"Images/ShepardFairey/15_Obey_180-South_P.png",fn:"15_Obey_180-South_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"15 180-South P",y:"",pw:36,ph:36,dpi:100,sz:"22.9 MB"},
+          {path:"Images/ShepardFairey/15_Obey_180-South_P_crop_1.jpg",fn:"15_Obey_180-South_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"15 180-South P",y:"",pw:36,ph:36,dpi:86,sz:"3.4 MB"},
+          {path:"Images/ShepardFairey/16_Obey_Ali-Canvas-Print_P.png",fn:"16_Obey_Ali-Canvas-Print_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"16 Ali-Canvas-Print P",y:"",pw:36,ph:36,dpi:100,sz:"24.1 MB"},
+          {path:"Images/ShepardFairey/16_Obey_Ali-Canvas-Print_P_crop_1.jpg",fn:"16_Obey_Ali-Canvas-Print_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"16 Ali-Canvas-Print P",y:"",pw:36,ph:36,dpi:86,sz:"3.2 MB"},
+          {path:"Images/ShepardFairey/17_Obey_Basquiat-Canvas_P.png",fn:"17_Obey_Basquiat-Canvas_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"17 Basquiat-Canvas P",y:"",pw:36,ph:36,dpi:100,sz:"18.6 MB"},
+          {path:"Images/ShepardFairey/17_Obey_Basquiat-Canvas_P_crop_1.jpg",fn:"17_Obey_Basquiat-Canvas_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"17 Basquiat-Canvas P",y:"",pw:36,ph:36,dpi:86,sz:"2.2 MB"},
+          {path:"Images/ShepardFairey/18_Obey_Keith-Haring-Canvas-Print--Gre_P.png",fn:"18_Obey_Keith-Haring-Canvas-Print--Gre_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"18 Keith-Haring-Canvas-Print--Gre P",y:"",pw:36,ph:36,dpi:100,sz:"28.4 MB"},
+          {path:"Images/ShepardFairey/18_Obey_Keith-Haring-Canvas-Print--Gre_P_crop_1.jpg",fn:"18_Obey_Keith-Haring-Canvas-Print--Gre_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"18 Keith-Haring-Canvas-Print--Gre P",y:"",pw:36,ph:36,dpi:86,sz:"4.1 MB"},
+          {path:"Images/ShepardFairey/19_Obey_Strummer-Canvas-Print_P.png",fn:"19_Obey_Strummer-Canvas-Print_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"19 Strummer-Canvas-Print P",y:"",pw:36,ph:36,dpi:100,sz:"26.4 MB"},
+          {path:"Images/ShepardFairey/19_Obey_Strummer-Canvas-Print_P_crop_1.jpg",fn:"19_Obey_Strummer-Canvas-Print_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"19 Strummer-Canvas-Print P",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/1_Obey_Lenin-Record_P.png",fn:"1_Obey_Lenin-Record_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"1 Lenin-Record P",y:"",pw:36,ph:36,dpi:100,sz:"30.2 MB"},
+          {path:"Images/ShepardFairey/1_Obey_Lenin-Record_P_crop_1.jpg",fn:"1_Obey_Lenin-Record_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"1 Lenin-Record P",y:"",pw:36,ph:36,dpi:86,sz:"4.2 MB"},
+          {path:"Images/ShepardFairey/26_Obey_Chinese Banner_L_crop_1.jpg",fn:"26_Obey_Chinese Banner_L_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"26 Chinese Banner L",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/26_Obey_Chinese-Banner_Letterpress_L.png",fn:"26_Obey_Chinese-Banner_Letterpress_L.png",w:3600,h:4800,a:"Shepard Fairey",t:"26 Chinese-Banner Letterpress L",y:"",pw:36,ph:36,dpi:100,sz:"17.0 MB"},
+          {path:"Images/ShepardFairey/26_Obey_Chinese-Banner_Letterpress_L_crop_1.jpg",fn:"26_Obey_Chinese-Banner_Letterpress_L_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"26 Chinese-Banner Letterpress L",y:"",pw:36,ph:36,dpi:86,sz:"2.1 MB"},
+          {path:"Images/ShepardFairey/28_Obey_PARADISE-TURNS-Signed-Offset-P_P.png",fn:"28_Obey_PARADISE-TURNS-Signed-Offset-P_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"28 PARADISE-TURNS-Signed-Offset-P P",y:"",pw:36,ph:36,dpi:100,sz:"23.3 MB"},
+          {path:"Images/ShepardFairey/28_Obey_PARADISE-TURNS-Signed-Offset-P_P_crop_1.jpg",fn:"28_Obey_PARADISE-TURNS-Signed-Offset-P_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"28 PARADISE-TURNS-Signed-Offset-P P",y:"",pw:36,ph:36,dpi:86,sz:"3.1 MB"},
+          {path:"Images/ShepardFairey/29_Obey_Power-and-Glory-Letterpress_P.png",fn:"29_Obey_Power-and-Glory-Letterpress_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"29 Power-and-Glory-Letterpress P",y:"",pw:36,ph:36,dpi:100,sz:"22.6 MB"},
+          {path:"Images/ShepardFairey/29_Obey_Power-and-Glory-Letterpress_P_crop_1.jpg",fn:"29_Obey_Power-and-Glory-Letterpress_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"29 Power-and-Glory-Letterpress P",y:"",pw:36,ph:36,dpi:86,sz:"2.9 MB"},
+          {path:"Images/ShepardFairey/2_Obey_Rose-Soldier_P.png",fn:"2_Obey_Rose-Soldier_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"2 Rose-Soldier P",y:"",pw:36,ph:36,dpi:100,sz:"26.0 MB"},
+          {path:"Images/ShepardFairey/2_Obey_Rose-Soldier_P_crop_1.jpg",fn:"2_Obey_Rose-Soldier_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"2 Rose-Soldier P",y:"",pw:36,ph:36,dpi:86,sz:"3.8 MB"},
+          {path:"Images/ShepardFairey/30_Obey_DEMAGOGUE_P.png",fn:"30_Obey_DEMAGOGUE_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"30 DEMAGOGUE P",y:"",pw:36,ph:36,dpi:100,sz:"20.2 MB"},
+          {path:"Images/ShepardFairey/30_Obey_DEMAGOGUE_P_crop_1.jpg",fn:"30_Obey_DEMAGOGUE_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"30 DEMAGOGUE P",y:"",pw:36,ph:36,dpi:86,sz:"2.4 MB"},
+          {path:"Images/ShepardFairey/31_Obey_Target-Exceptions_P.png",fn:"31_Obey_Target-Exceptions_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"31 Target-Exceptions P",y:"",pw:36,ph:36,dpi:100,sz:"19.1 MB"},
+          {path:"Images/ShepardFairey/31_Obey_Target-Exceptions_P_crop_1.jpg",fn:"31_Obey_Target-Exceptions_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"31 Target-Exceptions P",y:"",pw:36,ph:36,dpi:86,sz:"2.3 MB"},
+          {path:"Images/ShepardFairey/32_Obey_Peace-Guard-2-Stencil-Lisbon_P.png",fn:"32_Obey_Peace-Guard-2-Stencil-Lisbon_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"32 Peace-Guard-2-Stencil-Lisbon P",y:"",pw:36,ph:36,dpi:100,sz:"18.6 MB"},
+          {path:"Images/ShepardFairey/33_Obey_God-Save-The-Queen.png",fn:"33_Obey_God-Save-The-Queen.png",w:3600,h:4800,a:"Shepard Fairey",t:"33 God-Save-The-Queen",y:"",pw:36,ph:36,dpi:100,sz:"28.4 MB"},
+          {path:"Images/ShepardFairey/33_Obey_God-Save-The-Queen_crop_1.jpg",fn:"33_Obey_God-Save-The-Queen_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"33 God-Save-The-Queen",y:"",pw:36,ph:36,dpi:86,sz:"4.1 MB"},
+          {path:"Images/ShepardFairey/36_Obey_Tunnel-Vision-Blue_L.png",fn:"36_Obey_Tunnel-Vision-Blue_L.png",w:3600,h:4800,a:"Shepard Fairey",t:"36 Tunnel-Vision-Blue L",y:"",pw:36,ph:36,dpi:100,sz:"12.8 MB"},
+          {path:"Images/ShepardFairey/36_Obey_Tunnel-Vision-Blue_L_crop_1.jpg",fn:"36_Obey_Tunnel-Vision-Blue_L_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"36 Tunnel-Vision-Blue L",y:"",pw:36,ph:36,dpi:86,sz:"1.5 MB"},
+          {path:"Images/ShepardFairey/3_Obey_Chinese-Soldiers_P.png",fn:"3_Obey_Chinese-Soldiers_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"3 Chinese-Soldiers P",y:"",pw:36,ph:36,dpi:100,sz:"23.3 MB"},
+          {path:"Images/ShepardFairey/3_Obey_Chinese-Soldiers_P_crop_1.jpg",fn:"3_Obey_Chinese-Soldiers_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"3 Chinese-Soldiers P",y:"",pw:36,ph:36,dpi:86,sz:"3.0 MB"},
+          {path:"Images/ShepardFairey/43_Obey_STYLES-CHANGESTYLE-ENDURES_P.png",fn:"43_Obey_STYLES-CHANGESTYLE-ENDURES_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"43 STYLES-CHANGESTYLE-ENDURES P",y:"",pw:36,ph:36,dpi:100,sz:"26.7 MB"},
+          {path:"Images/ShepardFairey/43_Obey_STYLES-CHANGESTYLE-ENDURES_P_crop_1.jpg",fn:"43_Obey_STYLES-CHANGESTYLE-ENDURES_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"43 STYLES-CHANGESTYLE-ENDURES P",y:"",pw:36,ph:36,dpi:86,sz:"3.5 MB"},
+          {path:"Images/ShepardFairey/4_Obey_Muhammad-Ali_L.png",fn:"4_Obey_Muhammad-Ali_L.png",w:3600,h:4800,a:"Shepard Fairey",t:"4 Muhammad-Ali L",y:"",pw:36,ph:36,dpi:100,sz:"27.2 MB"},
+          {path:"Images/ShepardFairey/4_Obey_Muhammad-Ali_L_crop_1.jpg",fn:"4_Obey_Muhammad-Ali_L_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"4 Muhammad-Ali L",y:"",pw:36,ph:36,dpi:86,sz:"3.6 MB"},
+          {path:"Images/ShepardFairey/50_Obey_Warning-Addictive-Art-Print_P.png",fn:"50_Obey_Warning-Addictive-Art-Print_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"50 Warning-Addictive-Art-Print P",y:"",pw:36,ph:36,dpi:100,sz:"22.6 MB"},
+          {path:"Images/ShepardFairey/53_Obey_AK47-Lotus_P.png",fn:"53_Obey_AK47-Lotus_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"53 AK47-Lotus P",y:"",pw:36,ph:36,dpi:100,sz:"12.8 MB"},
+          {path:"Images/ShepardFairey/5_Obey_Peace-Goddess_P.png",fn:"5_Obey_Peace-Goddess_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"5 Peace-Goddess P",y:"",pw:36,ph:36,dpi:100,sz:"27.9 MB"},
+          {path:"Images/ShepardFairey/5_Obey_Peace-Goddess_P_crop_1.jpg",fn:"5_Obey_Peace-Goddess_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"5 Peace-Goddess P",y:"",pw:36,ph:36,dpi:86,sz:"3.7 MB"},
+          {path:"Images/ShepardFairey/63_Obey_Sedation-In-Bloom-Black-and-Re_P.png",fn:"63_Obey_Sedation-In-Bloom-Black-and-Re_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"63 Sedation-In-Bloom-Black-and-Re P",y:"",pw:36,ph:36,dpi:100,sz:"24.2 MB"},
+          {path:"Images/ShepardFairey/63_Obey_Sedation-In-Bloom-Black-and-Re_P_crop_1.jpg",fn:"63_Obey_Sedation-In-Bloom-Black-and-Re_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"63 Sedation-In-Bloom-Black-and-Re P",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/69_Obey_EYES-ON-THE-KING-VERDICT_P.png",fn:"69_Obey_EYES-ON-THE-KING-VERDICT_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"69 EYES-ON-THE-KING-VERDICT P",y:"",pw:36,ph:36,dpi:100,sz:"20.7 MB"},
+          {path:"Images/ShepardFairey/69_Obey_EYES-ON-THE-KING-VERDICT_P_crop_1.jpg",fn:"69_Obey_EYES-ON-THE-KING-VERDICT_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"69 EYES-ON-THE-KING-VERDICT P",y:"",pw:36,ph:36,dpi:86,sz:"2.5 MB"},
+          {path:"Images/ShepardFairey/6_Obey_Peace-Goddess-Gold_P.png",fn:"6_Obey_Peace-Goddess-Gold_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"6 Peace-Goddess-Gold P",y:"",pw:36,ph:36,dpi:100,sz:"20.7 MB"},
+          {path:"Images/ShepardFairey/6_Obey_Peace-Goddess-Gold_P_crop_1.jpg",fn:"6_Obey_Peace-Goddess-Gold_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"6 Peace-Goddess-Gold P",y:"",pw:36,ph:36,dpi:86,sz:"2.6 MB"},
+          {path:"Images/ShepardFairey/7_Obey_Peace-Goddess-Red_P.png",fn:"7_Obey_Peace-Goddess-Red_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"7 Peace-Goddess-Red P",y:"",pw:36,ph:36,dpi:100,sz:"24.2 MB"},
+          {path:"Images/ShepardFairey/7_Obey_Peace-Goddess-Red_P_crop_1.jpg",fn:"7_Obey_Peace-Goddess-Red_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"7 Peace-Goddess-Red P",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"},
+          {path:"Images/ShepardFairey/80_Obey_WARHOL-COLLAGES-silver_P.png",fn:"80_Obey_WARHOL-COLLAGES-silver_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"80 WARHOL-COLLAGES-silver P",y:"",pw:36,ph:36,dpi:100,sz:"27.2 MB"},
+          {path:"Images/ShepardFairey/80_Obey_WARHOL-COLLAGES-silver_P_crop_1.jpg",fn:"80_Obey_WARHOL-COLLAGES-silver_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"80 WARHOL-COLLAGES-silver P",y:"",pw:36,ph:36,dpi:86,sz:"3.6 MB"},
+          {path:"Images/ShepardFairey/81_Obey_LENNON-PEACE-AND-LIBERTY-BLUE_P.png",fn:"81_Obey_LENNON-PEACE-AND-LIBERTY-BLUE_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"81 LENNON-PEACE-AND-LIBERTY-BLUE P",y:"",pw:36,ph:36,dpi:100,sz:"19.1 MB"},
+          {path:"Images/ShepardFairey/82_Obey_Bliss-at-clifts-edge.png",fn:"82_Obey_Bliss-at-clifts-edge.png",w:3600,h:4800,a:"Shepard Fairey",t:"82 Bliss-at-clifts-edge",y:"",pw:36,ph:36,dpi:100,sz:"30.2 MB"},
+          {path:"Images/ShepardFairey/82_Obey_Bliss-at-clifts-edge_P.png",fn:"82_Obey_Bliss-at-clifts-edge_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"82 Bliss-at-clifts-edge P",y:"",pw:36,ph:36,dpi:100,sz:"30.2 MB"},
+          {path:"Images/ShepardFairey/82_Obey_Bliss-at-clifts-edge_P_crop_1.jpg",fn:"82_Obey_Bliss-at-clifts-edge_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"82 Bliss-at-clifts-edge P",y:"",pw:36,ph:36,dpi:86,sz:"4.2 MB"},
+          {path:"Images/ShepardFairey/82_Obey_Bliss-at-clifts-edge_crop_1.jpg",fn:"82_Obey_Bliss-at-clifts-edge_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"82 Bliss-at-clifts-edge",y:"",pw:36,ph:36,dpi:86,sz:"4.2 MB"},
+          {path:"Images/ShepardFairey/83_OBEY_Fairwell-to-Freedom-Stephen-Colbert.png",fn:"83_OBEY_Fairwell-to-Freedom-Stephen-Colbert.png",w:3600,h:4800,a:"Shepard Fairey",t:"83 OBEY Fairwell-to-Freedom-Stephen-Colbert",y:"",pw:36,ph:36,dpi:100,sz:"20.7 MB"},
+          {path:"Images/ShepardFairey/83_OBEY_Fairwell-to-Freedom-Stephen-Colbert_crop_1.jpg",fn:"83_OBEY_Fairwell-to-Freedom-Stephen-Colbert_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"83 OBEY Fairwell-to-Freedom-Stephen-Colbert",y:"",pw:36,ph:36,dpi:86,sz:"2.6 MB"},
+          {path:"Images/ShepardFairey/83_Obey_Damaged-Stencil-Series_Natural Springs.png",fn:"83_Obey_Damaged-Stencil-Series_Natural Springs.png",w:3600,h:4800,a:"Shepard Fairey",t:"83 Damaged-Stencil-Series Natural Springs",y:"",pw:36,ph:36,dpi:100,sz:"22.9 MB"},
+          {path:"Images/ShepardFairey/83_Obey_Damaged-Stencil-Series_Natural Springs_crop_1.jpg",fn:"83_Obey_Damaged-Stencil-Series_Natural Springs_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"83 Damaged-Stencil-Series Natural Springs",y:"",pw:36,ph:36,dpi:86,sz:"3.4 MB"},
+          {path:"Images/ShepardFairey/85_Obey_Damaged-Stencil-Series_Learn to Obey.png",fn:"85_Obey_Damaged-Stencil-Series_Learn to Obey.png",w:3600,h:4800,a:"Shepard Fairey",t:"85 Damaged-Stencil-Series Learn to Obey",y:"",pw:36,ph:36,dpi:100,sz:"25.8 MB"},
+          {path:"Images/ShepardFairey/85_Obey_Damaged-Stencil-Series_Learn to Obey_crop_1.jpg",fn:"85_Obey_Damaged-Stencil-Series_Learn to Obey_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"85 Damaged-Stencil-Series Learn to crop 1",y:"",pw:36,ph:36,dpi:86,sz:"3.5 MB"},
+          {path:"Images/ShepardFairey/87_Obey_Damaged-Stencil-Series_Proud Parents.png",fn:"87_Obey_Damaged-Stencil-Series_Proud Parents.png",w:3600,h:4800,a:"Shepard Fairey",t:"87 Damaged-Stencil-Series Proud Parents",y:"",pw:36,ph:36,dpi:100,sz:"24.1 MB"},
+          {path:"Images/ShepardFairey/87_Obey_Damaged-Stencil-Series_Proud Parents_crop_1.jpg",fn:"87_Obey_Damaged-Stencil-Series_Proud Parents_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"87 Damaged-Stencil-Series Proud Parents",y:"",pw:36,ph:36,dpi:86,sz:"3.2 MB"},
+          {path:"Images/ShepardFairey/89_Obey_Damaged-Stencil-Series_P.png",fn:"89_Obey_Damaged-Stencil-Series_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"89 Damaged-Stencil-Series P",y:"",pw:36,ph:36,dpi:100,sz:"27.1 MB"},
+          {path:"Images/ShepardFairey/89_Obey_Damaged-Stencil-Series_P_crop_1.jpg",fn:"89_Obey_Damaged-Stencil-Series_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"89 Damaged-Stencil-Series P",y:"",pw:36,ph:36,dpi:86,sz:"3.7 MB"},
+          {path:"Images/ShepardFairey/90_Obey_Damaged-Stencil-Series_Sinking Libertyç.png",fn:"90_Obey_Damaged-Stencil-Series_Sinking Libertyç.png",w:3600,h:4800,a:"Shepard Fairey",t:"90 Damaged-Stencil-Series Sinking Libertyç",y:"",pw:36,ph:36,dpi:100,sz:"22.9 MB"},
+          {path:"Images/ShepardFairey/90_Obey_Damaged-Stencil-Series_Sinking Libertyç_crop_1.jpg",fn:"90_Obey_Damaged-Stencil-Series_Sinking Libertyç_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"90 Damaged-Stencil-Series Sinking Libertyç",y:"",pw:36,ph:36,dpi:86,sz:"2.9 MB"},
+          {path:"Images/ShepardFairey/91_Obey_Damaged-Stencil-Series_Strumerville.png",fn:"91_Obey_Damaged-Stencil-Series_Strumerville.png",w:3600,h:4800,a:"Shepard Fairey",t:"91 Damaged-Stencil-Series Strumerville",y:"",pw:36,ph:36,dpi:100,sz:"23.3 MB"},
+          {path:"Images/ShepardFairey/91_Obey_Damaged-Stencil-Series_Strumerville_crop_1.jpg",fn:"91_Obey_Damaged-Stencil-Series_Strumerville_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"91 Damaged-Stencil-Series Strumerville",y:"",pw:36,ph:36,dpi:86,sz:"3.0 MB"},
+          {path:"Images/ShepardFairey/93_Obey_Catch-a-Fire-Red.png",fn:"93_Obey_Catch-a-Fire-Red.png",w:3600,h:4800,a:"Shepard Fairey",t:"93 Catch-a-Fire-Red",y:"",pw:36,ph:36,dpi:100,sz:"20.2 MB"},
+          {path:"Images/ShepardFairey/95_Obey_The-Medium-Is-The-Message_P.png",fn:"95_Obey_The-Medium-Is-The-Message_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"95 The-Medium-Is-The-Message P",y:"",pw:36,ph:36,dpi:100,sz:"19.0 MB"},
+          {path:"Images/ShepardFairey/95_Obey_The-Medium-Is-The-Message_P_crop_1.jpg",fn:"95_Obey_The-Medium-Is-The-Message_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"95 The-Medium-Is-The-Message P",y:"",pw:36,ph:36,dpi:86,sz:"2.3 MB"},
+          {path:"Images/ShepardFairey/96_Obey_Putin's-Ashes_P.png",fn:"96_Obey_Putin's-Ashes_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"96 Putin's-Ashes P",y:"",pw:36,ph:36,dpi:100,sz:"20.2 MB"},
+          {path:"Images/ShepardFairey/96_Obey_Putin's-Ashes_P_crop_1.jpg",fn:"96_Obey_Putin's-Ashes_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"96 Putin's-Ashes P",y:"",pw:36,ph:36,dpi:86,sz:"2.5 MB"},
+          {path:"Images/ShepardFairey/97_Obey_Power-to-the-people_P.png",fn:"97_Obey_Power-to-the-people_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"97 Power-to-the-people P",y:"",pw:36,ph:36,dpi:100,sz:"21.2 MB"},
+          {path:"Images/ShepardFairey/97_Obey_Power-to-the-people_P_crop_1.jpg",fn:"97_Obey_Power-to-the-people_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"97 Power-to-the-people P",y:"",pw:36,ph:36,dpi:86,sz:"2.8 MB"},
+          {path:"Images/ShepardFairey/98_Obey_Endless-Power_P.png",fn:"98_Obey_Endless-Power_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"98 Endless-Power P",y:"",pw:36,ph:36,dpi:100,sz:"19.7 MB"},
+          {path:"Images/ShepardFairey/98_Obey_Endless-Power_P_Obey_Global-Warning_P.png",fn:"98_Obey_Endless-Power_P_Obey_Global-Warning_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"98 Endless-Power P Global-Warning P",y:"",pw:36,ph:36,dpi:100,sz:"19.7 MB"},
+          {path:"Images/ShepardFairey/98_Obey_Endless-Power_P_crop_1.jpg",fn:"98_Obey_Endless-Power_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"98 Endless-Power P",y:"",pw:36,ph:36,dpi:86,sz:"2.4 MB"},
+          {path:"Images/ShepardFairey/98_Obey_Johny-Ramone-Smokin-Strings_P.png",fn:"98_Obey_Johny-Ramone-Smokin-Strings_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"98 Johny-Ramone-Smokin-Strings P",y:"",pw:36,ph:36,dpi:100,sz:"28.4 MB"},
+          {path:"Images/ShepardFairey/98_Obey_Johny-Ramone-Smokin-Strings_P_crop_1.jpg",fn:"98_Obey_Johny-Ramone-Smokin-Strings_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"98 Johny-Ramone-Smokin-Strings P",y:"",pw:36,ph:36,dpi:86,sz:"4.0 MB"},
+          {path:"Images/ShepardFairey/9_Obey_Presidential-Seal-Red_P.png",fn:"9_Obey_Presidential-Seal-Red_P.png",w:3600,h:4800,a:"Shepard Fairey",t:"9 Presidential-Seal-Red P",y:"",pw:36,ph:36,dpi:100,sz:"26.0 MB"},
+          {path:"Images/ShepardFairey/9_Obey_Presidential-Seal-Red_P_crop_1.jpg",fn:"9_Obey_Presidential-Seal-Red_P_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"9 Presidential-Seal-Red P",y:"",pw:36,ph:36,dpi:86,sz:"3.8 MB"},
+          {path:"Images/ShepardFairey/DUPLICATE REMOVE THESE.png",fn:"DUPLICATE REMOVE THESE.png",w:3600,h:4800,a:"Shepard Fairey",t:"DUPLICATE REMOVE THESE",y:"",pw:36,ph:36,dpi:100,sz:"27.4 MB"},
+          {path:"Images/ShepardFairey/DUPLICATE REMOVE THESE_crop_1.jpg",fn:"DUPLICATE REMOVE THESE_crop_1.jpg",w:3130,h:4000,a:"Shepard Fairey",t:"DUPLICATE REMOVE THESE",y:"",pw:36,ph:36,dpi:86,sz:"3.3 MB"}
+        ];
+
+        // Convert preloaded data to collection format
+        let collection = preloadedCollection.map(p => ({
+            filename: p.fn,
+            src: p.path,
+            width: p.w,
+            height: p.h,
+            artist: p.a,
+            title: p.t,
+            year: p.y,
+            printW: p.pw,
+            printH: p.ph,
+            dpi: p.dpi,
+            filesize: p.sz,
+            dateAdded: new Date().toISOString()
+        }));
+
+        // Parse filename to extract metadata
+        function parseFilename(filename) {
+            // Try to parse Artist_Title_Year format
+            const parts = filename.replace(/\.[^/.]+$/, '').split(/[_\-]/);
+            let artist = 'Unknown';
+            let title = filename.replace(/\.[^/.]+$/, '');
+            let year = '';
+
+            if (parts.length >= 2) {
+                // Check if first part is artist name
+                const artistLower = parts[0].toLowerCase();
+                if (artistLower.includes('warhol') || artistLower === 'aw') {
+                    artist = 'Andy Warhol';
+                    title = parts.slice(1).join(' ');
+                } else if (artistLower.includes('haring') || artistLower === 'kh') {
+                    artist = 'Keith Haring';
+                    title = parts.slice(1).join(' ');
+                } else if (artistLower === 'moma' || artistLower === 'met' || artistLower === 'whitney') {
+                    // Museum prefix - check next part for artist
+                    if (parts[1] && parts[1].toLowerCase().includes('marilyn')) {
+                        artist = 'Andy Warhol';
+                    }
+                    title = parts.slice(1).join(' ');
+                }
+            }
+
+            // Extract year if present (4 digits)
+            const yearMatch = filename.match(/\b(19\d{2}|20\d{2})\b/);
+            if (yearMatch) {
+                year = yearMatch[1];
+            }
+
+            // Clean up title
+            title = title.replace(/\b(19|20)\d{2}\b/, '').trim();
+            title = title.replace(/[_\-]+/g, ' ').trim();
+
+            return { artist, title, year };
+        }
+
+        // Get print size for known works
+        function getPrintSize(artist, title) {
+            const titleLower = title.toLowerCase();
+            if (artist === 'Andy Warhol') {
+                if (titleLower.includes('marilyn')) return { w: 36, h: 36 };
+                if (titleLower.includes('moonwalk') || titleLower.includes('apollo')) return { w: 38, h: 38 };
+                if (titleLower.includes('lennon')) return { w: 40, h: 40 };
+                if (titleLower.includes('jackie')) return { w: 20, h: 16 };
+                if (titleLower.includes('elvis')) return { w: 82, h: 60 };
+                if (titleLower.includes('skull')) return { w: 30, h: 40 };
+                if (titleLower.includes('flower')) return { w: 36, h: 36 };
+            }
+            if (artist === 'Keith Haring') {
+                if (titleLower.includes('radiant') || titleLower.includes('baby')) return { w: 20, h: 20 };
+                if (titleLower.includes('andy mouse')) return { w: 38, h: 38 };
+                if (titleLower.includes('pop shop')) return { w: 13, h: 17 };
+            }
+            return { w: 36, h: 36 }; // Default
+        }
+
+        // Calculate quality based on image dimensions and print size
+        function calcQuality(imgW, imgH, printW, printH) {
+            const dpi = Math.min(imgW / printW, imgH / printH);
+            if (dpi >= 300) return { label: '300+ DPI', class: 'quality-good' };
+            if (dpi >= 150) return { label: Math.round(dpi) + ' DPI', class: 'quality-good' };
+            if (dpi >= 100) return { label: Math.round(dpi) + ' DPI', class: 'quality-ok' };
+            return { label: Math.round(dpi) + ' DPI - Upscale', class: 'quality-low' };
+        }
+
+        // Render collection grid
+        function renderCollection() {
+            let items = [...collection];
+
+            // Filter by artist
+            const filterArtist = filterArtistSelect.value;
+            if (filterArtist !== 'all') {
+                const artistName = filterArtist === 'warhol' ? 'Andy Warhol' : 'Keith Haring';
+                items = items.filter(item => item.artist === artistName);
+            }
+
+            // Sort
+            const sortBy = sortBySelect.value;
+            items.sort((a, b) => {
+                if (sortBy === 'name') return a.title.localeCompare(b.title);
+                if (sortBy === 'artist') return a.artist.localeCompare(b.artist);
+                if (sortBy === 'size') return (b.printW * b.printH) - (a.printW * a.printH);
+                if (sortBy === 'quality') return b.dpi - a.dpi;
+                if (sortBy === 'resolution') return (b.width * b.height) - (a.width * a.height);
+                if (sortBy === 'date') return new Date(b.dateAdded) - new Date(a.dateAdded);
+                return 0;
+            });
+
+            // Update count display
+            const countDisplay = document.getElementById('collectionCount');
+            if (countDisplay) countDisplay.textContent = items.length + ' images';
+
+            if (items.length === 0) {
+                collectionGrid.innerHTML = `
+                    <div class="collection-empty" style="grid-column: 1 / -1;">
+                        <h3>No images match filter</h3>
+                        <p>Try selecting "All Artists" above</p>
+                    </div>
+                `;
+                return;
+            }
+
+            collectionGrid.innerHTML = items.map((item, idx) => {
+                const quality = calcQuality(item.width, item.height, item.printW, item.printH);
+                const originalIdx = collection.indexOf(item);
+                return `
+                    <div class="collection-item" data-idx="${originalIdx}" onclick="loadToPrint(${originalIdx})">
+                        <img src="${item.src}" alt="${item.title}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23333%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23666%22 text-anchor=%22middle%22>Image</text></svg>'">
+                        <div class="collection-item-info">
+                            <div class="collection-item-title">${item.title || item.filename}</div>
+                            <div class="collection-item-artist">${item.artist}${item.year ? ', ' + item.year : ''}</div>
+                            <div class="collection-item-meta">
+                                <span>${item.width} × ${item.height} px</span>
+                                <span class="${quality.class}">${quality.label}</span>
+                                <span>${item.filesize || ''}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load image to print tab
+        window.loadToPrint = function(idx) {
+            const item = collection[idx];
+            if (!item) return;
+
+            // Set current image - use file path for source
+            currentImage = {
+                width: item.width,
+                height: item.height,
+                src: item.src,
+                name: item.filename
+            };
+
+            // Set print size based on image aspect ratio (default 36x36)
+            const aspectRatio = item.width / item.height;
+            if (aspectRatio > 1.2) {
+                // Landscape
+                printWidth = 40;
+                printHeight = Math.round(40 / aspectRatio);
+            } else if (aspectRatio < 0.8) {
+                // Portrait
+                printHeight = 40;
+                printWidth = Math.round(40 * aspectRatio);
+            } else {
+                // Square-ish
+                printWidth = 36;
+                printHeight = 36;
+            }
+            customW.value = printWidth;
+            customH.value = printHeight;
+
+            // Update preset buttons
+            presetBtns.forEach(btn => {
+                const w = parseInt(btn.dataset.w);
+                const h = parseInt(btn.dataset.h);
+                btn.classList.toggle('active', w === printWidth && h === printHeight);
+            });
+
+            // Show preview
+            previewImg.src = item.src;
+            filenameEl.textContent = item.filename + ' (' + item.width + '×' + item.height + 'px, ' + (item.filesize || '') + ')';
+            dropZone.style.display = 'none';
+            previewContainer.classList.add('active');
+            printBtn.disabled = false;
+            updateStats();
+
+            // Switch to print tab
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-tab="print"]').classList.add('active');
+            document.getElementById('print').classList.add('active');
+        };
+
+        // Add images to collection
+        function addToCollection(files) {
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const { artist, title, year } = parseFilename(file.name);
+                        const printSize = getPrintSize(artist, title);
+                        const dpi = Math.min(img.width / printSize.w, img.height / printSize.h);
+
+                        collection.push({
+                            filename: file.name,
+                            src: e.target.result,
+                            width: img.width,
+                            height: img.height,
+                            artist,
+                            title,
+                            year,
+                            printW: printSize.w,
+                            printH: printSize.h,
+                            dpi: Math.round(dpi),
+                            dateAdded: new Date().toISOString()
+                        });
+
+                        localStorage.setItem('artprint-collection', JSON.stringify(collection));
+                        renderCollection();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Add images button
+        addImagesBtn.addEventListener('click', () => collectionFileInput.click());
+        addImagesBtn.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            addImagesBtn.style.borderColor = '#fff';
+        });
+        addImagesBtn.addEventListener('dragleave', () => {
+            addImagesBtn.style.borderColor = '#555';
+        });
+        addImagesBtn.addEventListener('drop', (e) => {
+            e.preventDefault();
+            addImagesBtn.style.borderColor = '#555';
+            if (e.dataTransfer.files.length) addToCollection(e.dataTransfer.files);
+        });
+        collectionFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) addToCollection(e.target.files);
+        });
+
+        // Sort and filter handlers
+        sortBySelect.addEventListener('change', renderCollection);
+        filterArtistSelect.addEventListener('change', renderCollection);
+
+        // Initial render
+        renderCollection();
+    </script>
+</body>
+</html>

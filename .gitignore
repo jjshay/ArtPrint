@@ -1,0 +1,9 @@
+# Large image files - keep local only
+Images/
+
+# macOS
+.DS_Store
+*.swp
+
+# Backups
+*.bak
