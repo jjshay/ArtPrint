@@ -5,7 +5,7 @@ A web-based application for managing and printing large format art on the Epson 
 ## Features
 
 - **Print Tab**: Drag & drop images, analyze resolution/DPI, select print sizes
-- **My Collection**: Browse 161 high-res art images with thumbnails, filter by artist
+- **My Collection**: Browse 162 high-res art images with thumbnails, filter by artist
 - **Printer Settings**: 30+ paper profiles (Epson, Arches, Hahnemuhle, Canson, Moab)
 - **Sources Tab**: Museum links and collector information
 
@@ -13,7 +13,7 @@ A web-based application for managing and printing large format art on the Epson 
 
 | Artist | Images | Resolution |
 |--------|--------|------------|
-| Andy Warhol | 60 | 2000-3000px |
+| Andy Warhol | 61 | 2000-3100px |
 | Keith Haring | 6 | 2000-3000px |
 | Shepard Fairey | 95 | 2160-4800px |
 
